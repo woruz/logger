@@ -1,0 +1,41 @@
+.log-viewer {
+    font-family: sans-serif;
+    padding: 2rem;
+    max-width: 900px;
+    margin: auto;
+}
+
+.filters,
+.log-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.filters label,
+.log-form input,
+.log-form select {
+    flex: 1;
+    min-width: 180px;
+}
+
+button {
+    padding: 8px 16px;
+    font-weight: bold;
+    background: #1976d2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.log-display {
+    background: #f4f4f4;
+    color: #000;
+    padding: 1rem;
+    border-radius: 8px;
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 2rem;
+}
