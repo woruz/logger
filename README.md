@@ -107,9 +107,6 @@ npm install
 # Linux (Snap-based)
 sudo snap install redis
 sudo snap set redis service.start=true
-
-# OR using Docker
-docker run --name redis -p 6379:6379 -d redis
 ```
 
 ### 4. Start the application
