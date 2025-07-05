@@ -47,5 +47,5 @@ A production-grade log ingestion and querying system built using **Node.js**, **
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/log-streamer.git
+git clone https://github.com/woruz/logger.git
 cd log-streamer
