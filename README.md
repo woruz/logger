@@ -24,6 +24,44 @@ A production-grade log ingestion and querying system built using **Node.js**, **
 
 ## 🏗️ Architecture
 
+```
++---------------------------+
+|       React Frontend     |
+|---------------------------|
+| - Mode toggle (SSE/Search)|
+| - Log filters + form UI   |
+| - Fetch API + EventSource |
++---------------------------+
+           │
+           ▼
++---------------------------+
+|       Express Backend     |
+|---------------------------|
+| - POST /logs              |
+| - GET /logs/search        |
+| - GET /logs (SSE)         |
+| - Joi validation          |
+| - In-memory SSE clients   |
++---------------------------+
+           │
+           ▼
++---------------------------+
+|      BullMQ Queue (Redis) |
+|---------------------------|
+| - Log queue               |
+| - Worker handles writes   |
+| - Broadcasts via SSE      |
++---------------------------+
+           │
+           ▼
++---------------------------+
+|     logs.json File        |
+|---------------------------|
+| - Persistent log store    |
++---------------------------+
+```
+
+---
 
 ## 🧰 Technology Stack
 
@@ -48,4 +86,130 @@ A production-grade log ingestion and querying system built using **Node.js**, **
 
 ```bash
 git clone https://github.com/woruz/logger.git
-cd log-streamer
+cd logger
+```
+
+### 2. Install dependencies
+
+```bash
+# Backend
+cd logger_backend
+npm install
+
+# Frontend
+cd ../logger_frontend
+npm install
+```
+
+### 3. Run Redis (if not running)
+
+```bash
+# Linux (Snap-based)
+sudo snap install redis
+sudo snap set redis service.start=true
+
+# OR using Docker
+docker run --name redis -p 6379:6379 -d redis
+```
+
+### 4. Start the application
+
+```bash
+# Start both frontend and backend
+# Terminal 1
+cd logger_backend
+npm start
+
+# Terminal 2
+cd logger_frontend
+npm run dev
+```
+
+---
+
+## ✅ API Reference
+
+### `POST /logs`
+
+Submit a new log entry.
+
+```json
+{
+  "message": "User login successful",
+  "level": "info",
+  "resourceId": "auth-service",
+  "traceId": "abc123",
+  "spanId": "xyz456",
+  "commit": "7f23d9a",
+  "metadata": {
+    "userId": "u001",
+    "ip": "127.0.0.1"
+  }
+}
+```
+
+### `GET /logs/search`
+
+Filter logs by:
+
+- `level` (info, warn, error, success)
+- `resourceId`
+- `start` (ISO timestamp)
+- `end` (ISO timestamp)
+
+Example:
+
+```
+/logs/search?level=warn&resourceId=auth-service
+```
+
+### `GET /logs` (SSE)
+
+Stream logs in real time, with optional filters.
+
+Example:
+
+```
+/logs?level=info&resourceId=auth-service
+```
+
+---
+
+## 📁 Folder Structure
+
+```
+logger/
+├── logger_backend/
+│   ├── src/
+│   │   ├── controllers/
+│   │   ├── queue/
+│   │   ├── routes/
+│   │   ├── utils/
+│   │   └── events/
+│   ├── logs.json
+│   ├── server.js
+│   └── package.json
+├── logger_frontend/
+│   ├── src/
+│   │   ├── components/LogViewer.jsx
+│   │   ├── utils/constants.js
+│   │  
+│   └── package.json
+└── README.md
+```
+
+---
+
+## 🧠 Future Enhancements
+
+- ✅ Migrate log storage from file (`logs.json`) to database (PostgreSQL, MongoDB, etc.)
+- ✅ Add authentication to protect endpoints
+- ✅ Use WebSockets for full-duplex streaming
+- ✅ Add pagination for search results
+- ✅ Create admin dashboard for log insights
+
+---
+
+## 👨‍💻 Author
+
+Made with ❤️ by [Woruz](https://github.com/woruz)
